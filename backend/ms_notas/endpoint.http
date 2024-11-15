@@ -1,0 +1,29 @@
+### Consultar estudiante
+GET http://127.0.0.1:8000/api/pepito/estudiantes
+
+### Crear un nuevo estudiante
+POST http://127.0.0.1:8000/api/pepito/estudiante
+Content-Type: "application/json"
+
+{
+    "cod": "1111",
+    "nombre": "Prueba1",
+    "email": "prueba1@test.com"
+    
+}
+
+### Consultar un estudiante por id
+GET http://127.0.0.1:8000/api/pepito/estudiante/1111
+
+### Modificar un estudiante
+PUT http://127.0.0.1:8000/api/pepito/estudiante/1111
+Content-Type: "application/json"
+
+{
+    "cod": "1111",
+    "nombre": "Prueba3",
+    "email": "prueba1@test.com"
+}
+
+### Eliminar estudiante
+DELETE http://127.0.0.1:8000/api/pepito/estudiante/1111
