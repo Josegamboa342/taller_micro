@@ -31,8 +31,6 @@ const cargarNotas = () => {
   };
   
   cargarNotas();
-  const a = document.getElementById('codigo');
-  console.log(a);
 
 
   function guardarTarea() {
@@ -40,17 +38,16 @@ const cargarNotas = () => {
     const form = document.forms['notasForm'];
 
     // Obtener los valores del formulario
-    const codigo = form['codigo'].value;
+    const cod = form['cod'].value;
     const nombres = form['nombres'].value;
     const email = form['email'].value;
 
     // Crear un objeto con los datos del formulario
     const formData = {
-        cod: codigo,
+        cod: cod,
         nombre: nombres,
         email: email
     };
-
     // Enviar los datos usando fetch
     fetch("http://127.0.0.1:8000/api/pepito/estudiante", {
         method: "POST",
@@ -71,16 +68,19 @@ const cargarNotas = () => {
             form.reset(); // Opcional: reiniciar el formulario
         })
         .catch((error) => {
-            console.error("Error al guardar el estudiante:", error);
+            console.error("Es este:", error);
             alert("Hubo un problema al guardar el estudiante");
         });
+
 }
 
-    // Imprimir los datos del formulario en la consola
-    console.log('Formulario guardado:', formData);
-    fetch(`${DOMAIN_URL}/pepito/notas`)
+     
+
+    // // Imprimir los datos del formulario en la consola
+    // console.log('Formulario guardado:', formData);
+    // fetch(`${DOMAIN_URL}/pepito/notas`)
 
 
-    // Si deseas imprimir el HTML del formulario completo:
-    console.log('Formulario completo HTML:', form.outerHTML);
+    // // Si deseas imprimir el HTML del formulario completo:
+    // console.log('Formulario completo HTML:', form.outerHTML);
 
