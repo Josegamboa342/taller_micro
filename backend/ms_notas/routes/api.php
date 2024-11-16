@@ -17,6 +17,18 @@ use App\Http\Controllers\NotaController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::prefix("pepito")->group(function () {
+    Route::controller(EstudianteController::class)->group(function () {
+        Route::get("estudiantes", "index");
+        Route::delete("estudiante/{cod}", "destroy");
+    });
+
+    Route::controller(NotaController::class)->group(function () {
+        Route::post("nota", "store");
+    });
+});
+
 Route::prefix('pepito')->group(function () {
     Route::get('estudiantes', [EstudianteController::class, 'index']);
     Route::resource('nota', NotaController::class)->except(['create', 'edit']);

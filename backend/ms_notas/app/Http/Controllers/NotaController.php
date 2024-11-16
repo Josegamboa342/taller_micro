@@ -15,11 +15,9 @@ class NotaController extends Controller
 
     public function store(Request $request)
     {
-        $nota = new Nota($request->all());
-        $nota->save();
-        return response()->json(['data' => $nota], 201);
+        $nota = Nota::create($request->all());
+        return response()->json(["data" => $nota], 201);
     }
-
     public function show($id)
     {
         $nota = Nota::find($id);

@@ -6,8 +6,8 @@ POST http://127.0.0.1:8000/api/pepito/estudiante
 Content-Type: "application/json"
 
 {
-    "cod": "1010",
-    "nombre": "PEPITO",
+    "cod": "9999",
+    "nombre": "PEPITE",
     "email": "PEPOTE@test.com"
     
 }

@@ -11,32 +11,59 @@ class EstudianteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $estudiantes = Estudiante::all()->map(function ($estudiante) {
-            $notas = Nota::where('codEstudiante', $estudiante->cod)->get();
-            if ($notas->isEmpty()) {
-                $estudiante->nota_definitiva = 'No hay nota';
-                $estudiante->estado = 'No hay nota';
-            } else {
-                $promedio = $notas->avg('nota');
-                $estudiante->nota_definitiva = round($promedio, 2);
-                $estudiante->estado = $promedio >= 3.0 ? 'Aprobado' : 'Perdido';
-            }
-            return $estudiante;
-        });
+    public function index(Request $request)
+{
+    $query = Estudiante::with('notas');
 
-        $resumen = [
-            'aprobados' => $estudiantes->where('estado', 'Aprobado')->count(),
-            'perdidos' => $estudiantes->where('estado', 'Perdido')->count(),
-            'sin_notas' => $estudiantes->where('estado', 'No hay nota')->count(),
-        ];
-
-        return response()->json([
-            'data' => $estudiantes,
-            'resumen' => $resumen,
-        ], 200);
+    // Filtros
+    if ($request->has('codigo') && $request->codigo) {
+        $query->where('cod', 'like', '%' . $request->codigo . '%');
     }
+    if ($request->has('nombre') && $request->nombre) {
+        $query->where('nombres', 'like', '%' . $request->nombre . '%');
+    }
+    if ($request->has('email') && $request->email) {
+        $query->where('email', 'like', '%' . $request->email . '%');
+    }
+    if ($request->has('estado') && $request->estado) {
+        $query->whereHas('notas', function ($q) use ($request) {
+            $q->havingRaw('AVG(nota) ' . ($request->estado == 'Aprobado' ? '>=' : '<') . ' 3');
+        });
+    }
+    if ($request->has('sin_notas') && $request->sin_notas) {
+        $query->whereDoesntHave('notas');
+    }
+    if ($request->has('rango_min') && $request->has('rango_max')) {
+        $query->whereHas('notas', function ($q) use ($request) {
+            $q->havingRaw('AVG(nota) BETWEEN ? AND ?', [$request->rango_min, $request->rango_max]);
+        });
+    }
+
+    $estudiantes = $query->get();
+
+    // Transformar datos para incluir estado y promedio
+    $data = $estudiantes->map(function ($estudiante) {
+        $promedio = $estudiante->notas->avg('nota');
+        $estado = is_null($promedio) ? 'Sin notas' : ($promedio >= 3 ? 'Aprobado' : 'Reprobado');
+
+        return [
+            'cod' => $estudiante->cod,
+            'nombres' => $estudiante->nombres,
+            'email' => $estudiante->email,
+            'nota_definitiva' => is_null($promedio) ? 'No hay nota' : round($promedio, 2),
+            'estado' => $estado,
+        ];
+    });
+
+    $resumen = [
+        'aprobados' => $data->where('estado', 'Aprobado')->count(),
+        'reprobados' => $data->where('estado', 'Reprobado')->count(),
+        'sin_notas' => $data->where('estado', 'Sin notas')->count(),
+    ];
+
+    return response()->json(['data' => $data, 'resumen' => $resumen], 200);
+}
+
 
     /**
      * Store a newly created resource in storage.
@@ -46,7 +73,7 @@ class EstudianteController extends Controller
        $dataBody = $request->all();
        $estudiante = new Estudiante();
        $estudiante->cod = $dataBody['cod'];
-       $estudiante->nombres = $dataBody['nombres'];
+       $estudiante->nombres = $dataBody['nombre'];
        $estudiante->email = $dataBody['email'];
        $estudiante->save();
        $data = ["data" => $estudiante];
@@ -90,16 +117,18 @@ class EstudianteController extends Controller
      */
     public function destroy(string $cod)
     {
-        $row = Estudiante::find($cod);
-        if (empty($row)) {
-            return response()->json(["msg" => "error no existe ese código"], 404);
+        $estudiante = Estudiante::find($cod);
+
+        if (empty($estudiante)) {
+            return response()->json(["msg" => "El estudiante no existe"], 404);
         }
-        $notas = Nota::where('codEstudiante', $cod)->get();
-        if (count($notas) > 0) {
-            return response()->json(["msg" => "No se puede eliminar el estudiante porque tiene notas asociadas"], 400);
+
+        if ($estudiante->notas()->exists()) {
+            return response()->json(["msg" => "No se puede eliminar el estudiante porque tiene notas registradas"], 400);
         }
-        $row->delete();
-        return response()->json(["data" => "Estudiante borrado"], 200);
+
+        $estudiante->delete();
+        return response()->json(["msg" => "Estudiante eliminado con éxito"], 200);
     }
 
 }
