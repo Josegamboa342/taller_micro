@@ -81,38 +81,5 @@ class EstudianteController extends Controller
         return response()->json(["data" => "Estudiante borrado"], 200);
     }
 
-    /**
-     * Resumen estudiantes: cuántos aprobaron, perdieron y están sin notas registradas.
-     */
-    public function resumen()
-    {
-        $estudiantes = Estudiante::all();
-
-        $estudiantesAprobados = 0;
-        $estudiantesPerdieron = 0;
-        $estudiantesSinNotas = 0;
-
-        foreach ($estudiantes as $estudiante) {
-            $notas = Nota::where('codEstudiante', $estudiante->cod)->get();
-
-            if ($notas->isEmpty()) {
-                $estudiantesSinNotas++;
-            } else {
-                $notaTotal = $notas->avg('nota'); 
-
-                if ($notaTotal >= 3.0) {
-                    $estudiantesAprobados++;
-                } else {
-                    $estudiantesPerdieron++;
-                }
-            }
-        }
-        $data = [
-            'estudiantesAprobados' => $estudiantesAprobados,
-            'estudiantesPerdieron' => $estudiantesPerdieron,
-            'estudiantesSinNotas' => $estudiantesSinNotas,
-        ];
-
-        return response()->json($data, 200);
-    }
 }
+   

@@ -27,7 +27,6 @@ Route::prefix("pepito")->group(function () {
         Route::post("estudiante", "store");
         Route::put("estudiante/{cod}", "update");
         Route::delete("estudiante/{cod}", "destroy");
-        Route::get("resumen", "resumen");
     });
 });
 
