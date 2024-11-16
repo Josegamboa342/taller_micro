@@ -13,9 +13,29 @@ class EstudianteController extends Controller
      */
     public function index()
     {
-        $rows = Estudiante::all();
-        $data = ["data" => $rows];
-        return response()->json($data, 200);
+        $estudiantes = Estudiante::all()->map(function ($estudiante) {
+            $notas = Nota::where('codEstudiante', $estudiante->cod)->get();
+            if ($notas->isEmpty()) {
+                $estudiante->nota_definitiva = 'No hay nota';
+                $estudiante->estado = 'No hay nota';
+            } else {
+                $promedio = $notas->avg('nota');
+                $estudiante->nota_definitiva = round($promedio, 2);
+                $estudiante->estado = $promedio >= 3.0 ? 'Aprobado' : 'Perdido';
+            }
+            return $estudiante;
+        });
+
+        $resumen = [
+            'aprobados' => $estudiantes->where('estado', 'Aprobado')->count(),
+            'perdidos' => $estudiantes->where('estado', 'Perdido')->count(),
+            'sin_notas' => $estudiantes->where('estado', 'No hay nota')->count(),
+        ];
+
+        return response()->json([
+            'data' => $estudiantes,
+            'resumen' => $resumen,
+        ], 200);
     }
 
     /**
@@ -23,14 +43,15 @@ class EstudianteController extends Controller
      */
     public function store(Request $request)
     {
-        $dataBody = $request->all();
-        $estudiante = new Estudiante();
-        $estudiante->cod = $dataBody['cod'];
-        $estudiante->nombres = $dataBody['nombre'];
-        $estudiante->email = $dataBody['email'];
-        $estudiante->save();
-        $data = ["data" => $estudiante];
+       $dataBody = $request->all();
+       $estudiante = new Estudiante();
+       $estudiante->cod = $dataBody['cod'];
+       $estudiante->nombres = $dataBody['nombres'];
+       $estudiante->email = $dataBody['email'];
+       $estudiante->save();
+       $data = ["data" => $estudiante];
         return response()->json($data, 201);
+ 
     }
 
     /**

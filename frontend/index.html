@@ -1,35 +1,25 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Notas</title>
-    </head>
-    <body>
-        <form name="notasForm">
-            <div>
-                <input id="cod" name="cod" type="text" placeholder="Codigo">
-            </div>
-            <div>
-                <input id="nombres" name="nombres" type="text" placeholder="nombres">
-            </div>
-            <div>
-                <input id="email" name="email" type="email" placeholder="email del estudiante">
-            </div>
-            <button type="button" onclick="guardarTarea()">Guardar</button>
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudiantes y Notas</title>
+</head>
+<body>
+    <table id="estudiantes">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Nota Definitiva</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="resumen"></div>
 
-        <table id="notas">
-            <thead>
-                <tr>
-                    <th>actividad</th>
-                    <th>nota</th>
-                    <th>codEstudiante</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <script src="js/js.js"></script>
-    </body>
-    </html>
+    <script src="js/js.js"></script>
+</body>
+</html>

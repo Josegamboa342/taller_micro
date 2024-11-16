@@ -38,10 +38,10 @@ POST http://127.0.0.1:8000/api/pepito/nota
 Content-Type: "application/json"
 
 {
-    "id": "7z",
-    "actividad": "Prueba1n",
-    "nota": "5.0",
-    "codEstudiante":1234
+    "id": "10",
+    "actividad": "x",
+    "nota": "2.9",
+    "codEstudiante":1010
     
     
 }

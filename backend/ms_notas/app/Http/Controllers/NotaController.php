@@ -7,71 +7,42 @@ use App\Models\Nota;
 
 class NotaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $rows = Nota::all();
-        $data = ["data" => $rows];
-        return response()->json($data, 200);
+        $notas = Nota::all();
+        return response()->json(['data' => $notas], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $dataBody = $request->all();
-        $nota = new Nota();
-        $nota->id = $dataBody['id'];
-        $nota->actividad = $dataBody['actividad'];
-        $nota->nota = $dataBody['nota'];
-        $nota->codEstudiante = $dataBody['codEstudiante'];
+        $nota = new Nota($request->all());
         $nota->save();
-        $data = ["data" => $nota];
-        return response()->json($data, 201);
+        return response()->json(['data' => $nota], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        $row = Nota::find($id);
-        if (empty($row)) {
-            return response()->json(["msg" => "error"], 404);
-        }
-        $data = ["data" => $row];
-        return response()->json($data, 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $dataBody = $request->all();
         $nota = Nota::find($id);
-        $nota->id = $dataBody['id'];
-        $nota->actividad = $dataBody['actividad'];
-        $nota->nota = $dataBody['nota'];
-        $nota->codEstudiante = $dataBody['codEstudiante'];
-        $nota->save();
-        $data = ["data" => $nota];
-        return response()->json($data, 200);
+        return $nota
+            ? response()->json(['data' => $nota], 200)
+            : response()->json(['msg' => 'Nota no encontrada'], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function update(Request $request, $id)
     {
-        $row = Nota::find($id);
-        if (empty($row)) {
-            return response()->json(["msg" => "error no existe esa nota"], 404);
-        }
-        $row->delete();
-        return response()->json(["data" => "Nota borrada"], 200);
+        $nota = Nota::find($id);
+        if (!$nota) return response()->json(['msg' => 'Nota no encontrada'], 404);
+
+        $nota->update($request->all());
+        return response()->json(['data' => $nota], 200);
+    }
+
+    public function destroy($id)
+    {
+        $nota = Nota::find($id);
+        if (!$nota) return response()->json(['msg' => 'Nota no encontrada'], 404);
+
+        $nota->delete();
+        return response()->json(['data' => 'Nota eliminada'], 200);
     }
 }
