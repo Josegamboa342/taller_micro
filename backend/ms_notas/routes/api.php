@@ -39,4 +39,3 @@ Route::prefix("pepito")->group(function () {
         Route::delete("nota/{cod}", "destroy");
     });
 });
-

@@ -8,15 +8,15 @@
     <body>
         <form name="notasForm">
             <div>
-                <input name="codigo" type="text" placeholder="Codigo">
+                <input id="cod" name="cod" type="text" placeholder="Codigo">
             </div>
             <div>
-                <input name="nombres" type="text" placeholder="nombres">
+                <input id="nombres" name="nombres" type="text" placeholder="nombres">
             </div>
             <div>
-                <input name="email" type="email" placeholder="email del estudiante">
+                <input id="email" name="email" type="email" placeholder="email del estudiante">
             </div>
-            <button type="submit">Guardar</button>
+            <button type="button" onclick="guardarTarea()">Guardar</button>
         </form>
 
         <table id="notas">
