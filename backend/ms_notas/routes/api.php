@@ -3,6 +3,7 @@
 use App\Http\Controllers\EstudianteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +27,17 @@ Route::prefix("pepito")->group(function () {
         Route::post("estudiante", "store");
         Route::put("estudiante/{cod}", "update");
         Route::delete("estudiante/{cod}", "destroy");
+        Route::get("resumen", "resumen");
     });
 });
+
+Route::prefix("pepito")->group(function () {
+    Route::controller(NotaController::class)->group(function () {
+        Route::get("notas", "index");
+        Route::get("nota/{id}", "show");
+        Route::post("nota", "store");
+        Route::put("nota/{cod}", "update");
+        Route::delete("nota/{cod}", "destroy");
+    });
+});
+

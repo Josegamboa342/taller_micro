@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Estudiante;
 use App\Models\Nota;
+
 class EstudianteController extends Controller
 {
     /**
@@ -56,8 +57,7 @@ class EstudianteController extends Controller
             return response()->json(["msg" => "error"], 404);
         }
         $estudiante->cod = $dataBody['cod'];
-        $estudiante->nombres
-         = $dataBody['nombre'];
+        $estudiante->nombres = $dataBody['nombre'];
         $estudiante->email = $dataBody['email'];
         $estudiante->save();
         $data = ["data" => $estudiante];
@@ -68,17 +68,51 @@ class EstudianteController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $cod)
-{
-    $row = Estudiante::find($cod);
-    if (empty($row)) {
-        return response()->json(["msg" => "error no existe ese código"], 404);
+    {
+        $row = Estudiante::find($cod);
+        if (empty($row)) {
+            return response()->json(["msg" => "error no existe ese código"], 404);
+        }
+        $notas = Nota::where('codEstudiante', $cod)->get();
+        if (count($notas) > 0) {
+            return response()->json(["msg" => "No se puede eliminar el estudiante porque tiene notas asociadas"], 400);
+        }
+        $row->delete();
+        return response()->json(["data" => "Estudiante borrado"], 200);
     }
-    $notas=Nota::where('codEstudiante','1111')->get();
-    if (count($notas) > 0) {
-        return response()->json(["msg" => "No se puede eliminar el estudiante porque tiene notas asociadas"], 400);
-    }
-    $row->delete();
-    return response()->json(["data" => "Estudiante borrado"], 200);
-}
 
+    /**
+     * Resumen estudiantes: cuántos aprobaron, perdieron y están sin notas registradas.
+     */
+    public function resumen()
+    {
+        $estudiantes = Estudiante::all();
+
+        $estudiantesAprobados = 0;
+        $estudiantesPerdieron = 0;
+        $estudiantesSinNotas = 0;
+
+        foreach ($estudiantes as $estudiante) {
+            $notas = Nota::where('codEstudiante', $estudiante->cod)->get();
+
+            if ($notas->isEmpty()) {
+                $estudiantesSinNotas++;
+            } else {
+                $notaTotal = $notas->avg('nota'); 
+
+                if ($notaTotal >= 3.0) {
+                    $estudiantesAprobados++;
+                } else {
+                    $estudiantesPerdieron++;
+                }
+            }
+        }
+        $data = [
+            'estudiantesAprobados' => $estudiantesAprobados,
+            'estudiantesPerdieron' => $estudiantesPerdieron,
+            'estudiantesSinNotas' => $estudiantesSinNotas,
+        ];
+
+        return response()->json($data, 200);
+    }
 }

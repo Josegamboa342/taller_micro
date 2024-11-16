@@ -53,9 +53,6 @@ class NotaController extends Controller
     {
         $dataBody = $request->all();
         $nota = Nota::find($id);
-        if (empty($estudiante)) {
-            return response()->json(["msg" => "error"], 404);
-        }
         $nota->id = $dataBody['id'];
         $nota->actividad = $dataBody['actividad'];
         $nota->nota = $dataBody['nota'];

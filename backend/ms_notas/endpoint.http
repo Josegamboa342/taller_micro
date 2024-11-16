@@ -6,9 +6,9 @@ POST http://127.0.0.1:8000/api/pepito/estudiante
 Content-Type: "application/json"
 
 {
-    "cod": "1111",
-    "nombre": "Prueba1",
-    "email": "prueba1@test.com"
+    "cod": "1010",
+    "nombre": "PEPITO",
+    "email": "PEPOTE@test.com"
     
 }
 
@@ -27,3 +27,41 @@ Content-Type: "application/json"
 
 ### Eliminar estudiante
 DELETE http://127.0.0.1:8000/api/pepito/estudiante/1111
+
+###---------------------------------------------------------------->
+
+### Consultar nota
+GET http://127.0.0.1:8000/api/pepito/notas
+
+### Crear una nueva nota
+POST http://127.0.0.1:8000/api/pepito/nota
+Content-Type: "application/json"
+
+{
+    "id": "7",
+    "actividad": "Prueba1n",
+    "nota": "5.0",
+    "codEstudiante":1234
+    
+    
+}
+
+### Consultar una nota por id
+GET http://127.0.0.1:8000/api/pepito/nota/1
+
+### Modificar una nota
+PUT http://127.0.0.1:8000/api/pepito/nota/5
+Content-Type: "application/json"
+
+{
+    "id": "5",
+    "actividad": "Pruebadecimal",
+    "nota": "4.12",
+    "codEstudiante":5678
+}
+
+### Eliminar nota
+DELETE http://127.0.0.1:8000/api/pepito/nota/1
+
+### resumen 
+GET http://127.0.0.1:8000/api/pepito/resumen
