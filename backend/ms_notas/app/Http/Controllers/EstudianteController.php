@@ -13,39 +13,53 @@ class EstudianteController extends Controller
      */
     public function index(Request $request)
 {
-    $query = Estudiante::with('notas');
 
-    // Filtros
+    $estudiantes = Estudiante::with('notas');
+
+
     if ($request->has('codigo') && $request->codigo) {
-        $query->where('cod', 'like', '%' . $request->codigo . '%');
+        $estudiantes = $estudiantes->where('cod', 'like', '%' . $request->codigo . '%');
     }
     if ($request->has('nombre') && $request->nombre) {
-        $query->where('nombres', 'like', '%' . $request->nombre . '%');
+        $estudiantes = $estudiantes->where('nombres', 'like', '%' . $request->nombre . '%');
     }
     if ($request->has('email') && $request->email) {
-        $query->where('email', 'like', '%' . $request->email . '%');
-    }
-    if ($request->has('estado') && $request->estado) {
-        $query->whereHas('notas', function ($q) use ($request) {
-            $q->havingRaw('AVG(nota) ' . ($request->estado == 'Aprobado' ? '>=' : '<') . ' 3');
-        });
-    }
-    if ($request->has('sin_notas') && $request->sin_notas) {
-        $query->whereDoesntHave('notas');
+        $estudiantes = $estudiantes->where('email', 'like', '%' . $request->email . '%');
     }
     if ($request->has('rango_min') && $request->has('rango_max')) {
-        $query->whereHas('notas', function ($q) use ($request) {
+        $estudiantes = $estudiantes->whereHas('notas', function ($q) use ($request) {
             $q->havingRaw('AVG(nota) BETWEEN ? AND ?', [$request->rango_min, $request->rango_max]);
         });
     }
+    if ($request->has('sin_notas') && $request->sin_notas) {
+        $estudiantes = $estudiantes->whereDoesntHave('notas');
+    }
 
-    $estudiantes = $query->get();
 
-    // Transformar datos para incluir estado y promedio
+    $estudiantes = $estudiantes->get();
+
+ 
+    if ($request->has('estado') && $request->estado) {
+        $estado = strtolower($request->estado);
+        $estudiantes = $estudiantes->filter(function ($estudiante) use ($estado) {
+    
+            $promedio = $estudiante->notas->avg('nota');
+            
+            $estado_calculado = null;
+            if (is_null($promedio)) {
+                $estado_calculado = 'sin notas';
+            } elseif ($promedio >= 3) {
+                $estado_calculado = 'aprobado';
+            } else {
+                $estado_calculado = 'reprobado';
+            }
+            return $estado_calculado === $estado;
+        });
+    }
+
     $data = $estudiantes->map(function ($estudiante) {
         $promedio = $estudiante->notas->avg('nota');
         $estado = is_null($promedio) ? 'Sin notas' : ($promedio >= 3 ? 'Aprobado' : 'Reprobado');
-
         return [
             'cod' => $estudiante->cod,
             'nombres' => $estudiante->nombres,
