@@ -13,9 +13,7 @@ class EstudianteController extends Controller
      */
     public function index(Request $request)
 {
-
     $estudiantes = Estudiante::with('notas');
-
 
     if ($request->has('codigo') && $request->codigo) {
         $estudiantes = $estudiantes->where('cod', 'like', '%' . $request->codigo . '%');
@@ -35,24 +33,13 @@ class EstudianteController extends Controller
         $estudiantes = $estudiantes->whereDoesntHave('notas');
     }
 
-
     $estudiantes = $estudiantes->get();
 
- 
     if ($request->has('estado') && $request->estado) {
         $estado = strtolower($request->estado);
         $estudiantes = $estudiantes->filter(function ($estudiante) use ($estado) {
-    
             $promedio = $estudiante->notas->avg('nota');
-            
-            $estado_calculado = null;
-            if (is_null($promedio)) {
-                $estado_calculado = 'sin notas';
-            } elseif ($promedio >= 3) {
-                $estado_calculado = 'aprobado';
-            } else {
-                $estado_calculado = 'reprobado';
-            }
+            $estado_calculado = is_null($promedio) ? 'sin notas' : ($promedio >= 3 ? 'aprobado' : 'reprobado');
             return $estado_calculado === $estado;
         });
     }

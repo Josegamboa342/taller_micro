@@ -1,4 +1,5 @@
 const API_URL = "http://127.0.0.1:8000/api/pepito"; 
+
 const cargarEstudiantes = (filtros = {}) => {
     const url = new URL(`${API_URL}/estudiantes`);
     Object.keys(filtros).forEach(key => {
@@ -27,19 +28,15 @@ const cargarEstudiantes = (filtros = {}) => {
                 tbody.appendChild(tr);
             });
 
+            document.getElementById("resumen-aprobados").textContent = `Aprobados: ${data.resumen.aprobados}`;
+            document.getElementById("resumen-reprobados").textContent = `Reprobados: ${data.resumen.reprobados}`;
+            document.getElementById("resumen-sin-notas").textContent = `Sin Notas: ${data.resumen.sin_notas}`;
         })
         .catch(error => console.error("Error al cargar estudiantes:", error));
 };
 
-document.querySelector("#estudiantes tbody").addEventListener("click", function (e) {
-    if (e.target && e.target.matches("button")) {
-        const codigo = e.target.getAttribute("data-codigo");
-        verEstudiante(codigo); 
-    }
-});
-
 const verEstudiante = (codigo) => {
-    fetch(`http://127.0.0.1:8000/api/pepito/estudiante/${codigo}`)
+    fetch(`${API_URL}/estudiante/${codigo}`)
         .then(response => response.json())
         .then(data => {
             const estudiante = data.data;
@@ -59,7 +56,6 @@ const verEstudiante = (codigo) => {
             document.getElementById("info-promedio").textContent = `Promedio: ${isNaN(promedio) ? "No hay nota" : promedio.toFixed(2)}`;
             document.getElementById("info-estado").textContent = `Estado: ${estado}`;
 
-       
             const notasTbody = document.querySelector("#notas tbody");
             notasTbody.innerHTML = ""; 
 
@@ -76,8 +72,7 @@ const verEstudiante = (codigo) => {
         .catch(error => console.error("Error al cargar estudiante:", error));
 };
 
-
-document.getElementById("filtros").addEventListener("submit", (e) => {
+document.querySelector("#filtros").addEventListener("submit", (e) => {
     e.preventDefault();
     const filtros = {
         codigo: document.getElementById("codigo").value,
@@ -89,6 +84,13 @@ document.getElementById("filtros").addEventListener("submit", (e) => {
         sin_notas: document.getElementById("sin_notas").checked ? 1 : 0,
     };
     cargarEstudiantes(filtros);
+});
+
+document.querySelector("#estudiantes tbody").addEventListener("click", function (e) {
+    if (e.target && e.target.matches("button")) {
+        const codigo = e.target.getAttribute("data-codigo");
+        verEstudiante(codigo);
+    }
 });
 
 cargarEstudiantes();
