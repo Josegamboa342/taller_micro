@@ -99,14 +99,15 @@ class EstudianteController extends Controller
      * Display the specified resource.
      */
     public function show(string $cod)
-    {
-        $row = Estudiante::find($cod);
-        if (empty($row)) {
-            return response()->json(["msg" => "error"], 404);
-        }
-        $data = ["data" => $row];
-        return response()->json($data, 200);
+{
+    $estudiante = Estudiante::with('notas')->find($cod); 
+    if (!$estudiante) {
+        return response()->json(["msg" => "Estudiante no encontrado"], 404);
     }
+    $data = ["data" => $estudiante];
+    return response()->json($data, 200);
+}
+
 
     /**
      * Update the specified resource in storage.

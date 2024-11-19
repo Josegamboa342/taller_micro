@@ -1,23 +1,18 @@
-const API_URL = "http://127.0.0.1:8000/api/pepito";
-
+const API_URL = "http://127.0.0.1:8000/api/pepito"; 
 const cargarEstudiantes = (filtros = {}) => {
-    let url = new URL(`${API_URL}/estudiantes`);
-    
-   
+    const url = new URL(`${API_URL}/estudiantes`);
     Object.keys(filtros).forEach(key => {
-        if (filtros[key]) { 
+        if (filtros[key]) {
             url.searchParams.append(key, filtros[key]);
         }
     });
 
-
     fetch(url)
-        .then((response) => response.json())
-        .then((body) => {
+        .then(response => response.json())
+        .then(data => {
             const tbody = document.querySelector("#estudiantes tbody");
-            tbody.innerHTML = "";  
-
-            body.data.forEach((estudiante) => {
+            tbody.innerHTML = ""; 
+            data.data.forEach(estudiante => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${estudiante.cod}</td>
@@ -26,51 +21,74 @@ const cargarEstudiantes = (filtros = {}) => {
                     <td>${estudiante.nota_definitiva}</td>
                     <td>${estudiante.estado}</td>
                     <td>
-                        <button onclick="eliminarEstudiante('${estudiante.cod}')">Eliminar</button>
+                        <button data-codigo="${estudiante.cod}">Ver</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            const resumen = document.getElementById("resumen");
-            resumen.innerHTML = `
-                <p>Aprobados: ${body.resumen.aprobados}</p>
-                <p>Reprobados: ${body.resumen.reprobados}</p>
-                <p>Sin notas: ${body.resumen.sin_notas}</p>
-            `;
         })
-        .catch((error) => {
-            console.error("Error al cargar los estudiantes:", error);
-        });
+        .catch(error => console.error("Error al cargar estudiantes:", error));
 };
 
-const eliminarEstudiante = (codigo) => {
-    if (confirm("¿Estás seguro de que deseas eliminar a este estudiante?")) {
-        fetch(`${API_URL}/estudiante/${codigo}`, {
-            method: "DELETE",
-        })
-            .then((response) => response.json())
-            .then((body) => {
-                alert(body.msg);
-                cargarEstudiantes();
-            });
+document.querySelector("#estudiantes tbody").addEventListener("click", function (e) {
+    if (e.target && e.target.matches("button")) {
+        const codigo = e.target.getAttribute("data-codigo");
+        verEstudiante(codigo); 
     }
+});
+
+const verEstudiante = (codigo) => {
+    fetch(`http://127.0.0.1:8000/api/pepito/estudiante/${codigo}`)
+        .then(response => response.json())
+        .then(data => {
+            const estudiante = data.data;
+
+            const notasValidas = estudiante.notas.filter(nota => !isNaN(nota.nota));
+            
+            const promedio = notasValidas.length > 0
+                ? notasValidas.reduce((sum, nota) => sum + parseFloat(nota.nota), 0) / notasValidas.length
+                : NaN;
+            const estado = isNaN(promedio)
+                ? "Sin notas"
+                : promedio >= 3 ? "Aprobado" : "Reprobado";
+
+            document.getElementById("info-codigo").textContent = `Código: ${estudiante.cod}`;
+            document.getElementById("info-nombre").textContent = `Nombre: ${estudiante.nombres}`;
+            document.getElementById("info-email").textContent = `Email: ${estudiante.email}`;
+            document.getElementById("info-promedio").textContent = `Promedio: ${isNaN(promedio) ? "No hay nota" : promedio.toFixed(2)}`;
+            document.getElementById("info-estado").textContent = `Estado: ${estado}`;
+
+       
+            const notasTbody = document.querySelector("#notas tbody");
+            notasTbody.innerHTML = ""; 
+
+            estudiante.notas.forEach(nota => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${nota.id}</td>
+                    <td>${nota.actividad}</td>
+                    <td>${nota.nota}</td>
+                `;
+                notasTbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error("Error al cargar estudiante:", error));
 };
 
-cargarEstudiantes();
 
-document.getElementById('filtros').addEventListener('submit', (e) => {
+document.getElementById("filtros").addEventListener("submit", (e) => {
     e.preventDefault();
-
     const filtros = {
-        codigo: document.getElementById('codigo').value,
-        nombre: document.getElementById('nombre').value,
-        email: document.getElementById('email').value,
-        estado: document.getElementById('estado').value,
-        rango_min: document.getElementById('rango_min').value,
-        rango_max: document.getElementById('rango_max').value,
-        sin_notas: document.getElementById('sin_notas').checked ? 1 : 0,  
+        codigo: document.getElementById("codigo").value,
+        nombre: document.getElementById("nombre").value,
+        email: document.getElementById("email").value,
+        estado: document.getElementById("estado").value,
+        rango_min: document.getElementById("rango_min").value,
+        rango_max: document.getElementById("rango_max").value,
+        sin_notas: document.getElementById("sin_notas").checked ? 1 : 0,
     };
-
     cargarEstudiantes(filtros);
 });
+
+cargarEstudiantes();
