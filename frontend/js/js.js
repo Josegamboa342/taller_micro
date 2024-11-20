@@ -28,12 +28,16 @@ const cargarEstudiantes = (filtros = {}) => {
                 tbody.appendChild(tr);
             });
 
+            // Resumen de estudiantes
             document.getElementById("resumen-aprobados").textContent = `Aprobados: ${data.resumen.aprobados}`;
             document.getElementById("resumen-reprobados").textContent = `Reprobados: ${data.resumen.reprobados}`;
             document.getElementById("resumen-sin-notas").textContent = `Sin Notas: ${data.resumen.sin_notas}`;
+            document.getElementById("resumen-notas-abajo").textContent = `Notas menores a 3: ${data.resumen.notas_abajo_3}`;
+            document.getElementById("resumen-notas-arriba").textContent = `Notas mayores o iguales a 3: ${data.resumen.notas_arriba_3}`;
         })
         .catch(error => console.error("Error al cargar estudiantes:", error));
 };
+
 
 const getEstadoClass = (notaDefinitiva) => {
     if (notaDefinitiva >= 0 && notaDefinitiva <= 2) return 'baja';
