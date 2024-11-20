@@ -15,6 +15,12 @@ use App\Http\Controllers\NotaController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+// En api.php
+
+
+
+Route::delete('nota/{id}', [NotaController::class, 'destroy']);
+
 
 Route::prefix("pepito")->group(function () {
     Route::controller(EstudianteController::class)->group(function () {
@@ -44,14 +50,12 @@ Route::prefix("pepito")->group(function () {
         Route::put("estudiante/{cod}", "update");
         Route::delete("estudiante/{cod}", "destroy");
     });
-});
 
-Route::prefix("pepito")->group(function () {
     Route::controller(NotaController::class)->group(function () {
         Route::get("notas", "index");
         Route::get("nota/{id}", "show");
         Route::post("nota", "store");
-        Route::put("nota/{cod}", "update");
-        Route::delete("nota/{cod}", "destroy");
+        Route::put("nota/{id}", "update");
+        Route::delete("nota/{id}", "destroy"); // Confirmación de eliminación
     });
 });

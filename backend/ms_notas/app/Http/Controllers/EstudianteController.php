@@ -15,9 +15,27 @@ class EstudianteController extends Controller
 {
     $estudiantes = Estudiante::with('notas');
 
-    // Filtros existentes...
-    
+    if ($request->has('codigo') && $request->codigo) {
+        $estudiantes = $estudiantes->where('cod', 'like', '%' . $request->codigo . '%');
+    }
+    if ($request->has('nombre') && $request->nombre) {
+        $estudiantes = $estudiantes->where('nombres', 'like', '%' . $request->nombre . '%');
+    }
+    if ($request->has('email') && $request->email) {
+        $estudiantes = $estudiantes->where('email', 'like', '%' . $request->email . '%');
+    }
+    if ($request->has('rango_min') && $request->has('rango_max')) {
+        $estudiantes = $estudiantes->whereHas('notas', function ($q) use ($request) {
+            $q->havingRaw('AVG(nota) BETWEEN ? AND ?', [$request->rango_min, $request->rango_max]);
+        });
+    }
+    if ($request->has('sin_notas') && $request->sin_notas) {
+        $estudiantes = $estudiantes->whereDoesntHave('notas');
+    }
+
     $estudiantes = $estudiantes->get();
+
+    
 
     if ($request->has('estado') && $request->estado) {
         $estado = strtolower($request->estado);

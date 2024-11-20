@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000/api/pepito"; 
+
+const API_URL = "http://127.0.0.1:8000/api/pepito";
 
 const cargarEstudiantes = (filtros = {}) => {
     const url = new URL(`${API_URL}/estudiantes`);
@@ -28,7 +29,6 @@ const cargarEstudiantes = (filtros = {}) => {
                 tbody.appendChild(tr);
             });
 
-            // Resumen de estudiantes
             document.getElementById("resumen-aprobados").textContent = `Aprobados: ${data.resumen.aprobados}`;
             document.getElementById("resumen-reprobados").textContent = `Reprobados: ${data.resumen.reprobados}`;
             document.getElementById("resumen-sin-notas").textContent = `Sin Notas: ${data.resumen.sin_notas}`;
@@ -37,7 +37,6 @@ const cargarEstudiantes = (filtros = {}) => {
         })
         .catch(error => console.error("Error al cargar estudiantes:", error));
 };
-
 
 const getEstadoClass = (notaDefinitiva) => {
     if (notaDefinitiva >= 0 && notaDefinitiva <= 2) return 'baja';
@@ -78,6 +77,9 @@ const verEstudiante = (codigo) => {
                     <td>${nota.id}</td>
                     <td>${nota.actividad}</td>
                     <td>${nota.nota}</td>
+                    <td>
+                        <button class="eliminar-nota" data-id="${nota.id}">Eliminar</button>
+                    </td>
                 `;
                 notasTbody.appendChild(tr);
             });
@@ -113,5 +115,29 @@ document.querySelector("#estudiantes tbody").addEventListener("click", function 
         verEstudiante(codigo);
     }
 });
+
+document.querySelector("#notas tbody").addEventListener("click", function (e) {
+    if (e.target && e.target.matches("button.eliminar-nota")) {
+        const notaId = e.target.getAttribute("data-id");
+
+        if (confirm("¿Estás seguro de que deseas eliminar esta nota?")) {
+            eliminarNota(notaId);
+        }
+    }
+});
+
+const eliminarNota = (notaId) => {
+    fetch(`${API_URL}/nota/${notaId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: true }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.msg);
+            cargarEstudiantes();
+        })
+        .catch(error => console.error("Error al eliminar la nota:", error));
+};
 
 cargarEstudiantes();
