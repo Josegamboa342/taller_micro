@@ -7,12 +7,21 @@ use App\Models\Nota;
 
     class NotaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notas = Nota::all();
+        $notas = Nota::query();
+
+        if ($request->has('actividad') && $request->actividad) {
+            $notas = $notas->where('actividad', 'like', '%' . $request->actividad . '%');
+        }
+
+        if ($request->has('nota_min') && $request->has('nota_max')) {
+            $notas = $notas->whereBetween('nota', [$request->nota_min, $request->nota_max]);
+        }
+
+        $notas = $notas->get();
         return response()->json(['data' => $notas], 200);
     }
-
     public function store(Request $request)
     {
         $nota = Nota::create($request->all());
@@ -53,4 +62,3 @@ use App\Models\Nota;
     }
     
 }
-

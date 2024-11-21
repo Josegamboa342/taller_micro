@@ -9,7 +9,7 @@ class Estudiante extends Model
     protected $table = 'estudiantes';
     public $timestamps = false;
     protected $primaryKey = 'cod';
-    protected $fillable = ['cod', 'nombres', 'email'];
+    //protected $fillable = ['cod', 'nombres', 'email'];
 
     public function notas()
     {

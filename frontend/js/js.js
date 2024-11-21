@@ -1,5 +1,68 @@
 
 const API_URL = "http://127.0.0.1:8000/api/pepito";
+const contactoForm = document.forms['contactoForm'];
+let codigoGlobal= 0;
+
+contactoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const estudiante = {
+        cod: contactoForm['codigo'].value,
+        nombre: contactoForm['nombre'].value,
+        email: contactoForm['email'].value,
+    };
+    
+    crearEstudiante(estudiante);
+});
+
+const crearEstudiante = (estudiante) => {
+    fetch(`${API_URL}/estudiante`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(estudiante)
+    })
+        .then((response) => {
+            if (response.status === 404) {
+                alert("Error en el servicio");
+                throw new Error("Servicio no encontrado");
+            }
+            return response.json();
+        })
+        .then((body) => {
+            alert(`Estudiante creado exitosamente: ${body.data.nombre}`);
+            cargarEstudiantes();
+            
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al intentar crear el estudiante.");
+        })
+        .finally(() => console.log("Creación de estudiante finalizada"));
+};
+//-----------------------------------------------------------------------------------------
+const eliminarEstudiante = (codigo) => {
+    if (confirm("¿Estás seguro de que deseas eliminar este estudiante?")) {
+        fetch(`${API_URL}/estudiante/${codigo}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirm: true }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.msg);
+            cargarEstudiantes();
+        })
+        .catch(error => console.error("Error al eliminar el estudiante:", error));
+    } else {
+        alert("Eliminación cancelada.");
+    }
+};
+const eliminarEstd = (cod) => {
+    eliminarEstudiante(cod);
+};
+
+//--------------------------------------------------------------------------------
 
 const cargarEstudiantes = (filtros = {}) => {
     const url = new URL(`${API_URL}/estudiantes`);
@@ -13,7 +76,7 @@ const cargarEstudiantes = (filtros = {}) => {
         .then(response => response.json())
         .then(data => {
             const tbody = document.querySelector("#estudiantes tbody");
-            tbody.innerHTML = ""; 
+            tbody.innerHTML = "";
             data.data.forEach(estudiante => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -23,7 +86,8 @@ const cargarEstudiantes = (filtros = {}) => {
                     <td>${estudiante.nota_definitiva}</td>
                     <td class="${getEstadoClass(estudiante.nota_definitiva)}">${estudiante.estado}</td>
                     <td>
-                        <button data-codigo="${estudiante.cod}">Ver</button>
+                        <button onclick="verEstudiante(${estudiante.cod})">Ver</button>
+                        <button onclick="eliminarEstd(${estudiante.cod})" class="eliminar-estudiante">Eliminar</>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -47,13 +111,14 @@ const getEstadoClass = (notaDefinitiva) => {
 };
 
 const verEstudiante = (codigo) => {
+    codigoGlobal=codigo;
     fetch(`${API_URL}/estudiante/${codigo}`)
         .then(response => response.json())
         .then(data => {
             const estudiante = data.data;
 
             const notasValidas = estudiante.notas.filter(nota => !isNaN(nota.nota));
-            
+
             const promedio = notasValidas.length > 0
                 ? notasValidas.reduce((sum, nota) => sum + parseFloat(nota.nota), 0) / notasValidas.length
                 : NaN;
@@ -68,7 +133,7 @@ const verEstudiante = (codigo) => {
             document.getElementById("info-estado").textContent = `Estado: ${estado}`;
 
             const notasTbody = document.querySelector("#notas tbody");
-            notasTbody.innerHTML = ""; 
+            notasTbody.innerHTML = "";
 
             estudiante.notas.forEach(nota => {
                 const tr = document.createElement("tr");
@@ -109,12 +174,7 @@ document.querySelector("#filtros").addEventListener("submit", (e) => {
     cargarEstudiantes(filtros);
 });
 
-document.querySelector("#estudiantes tbody").addEventListener("click", function (e) {
-    if (e.target && e.target.matches("button")) {
-        const codigo = e.target.getAttribute("data-codigo");
-        verEstudiante(codigo);
-    }
-});
+
 
 document.querySelector("#notas tbody").addEventListener("click", function (e) {
     if (e.target && e.target.matches("button.eliminar-nota")) {
@@ -141,3 +201,83 @@ const eliminarNota = (notaId) => {
 };
 
 cargarEstudiantes();
+const cargarNotas = (filtros = {}) => {
+    const url = new URL(`${API_URL}/notas`);
+    Object.keys(filtros).forEach(key => {
+        if (filtros[key]) {
+            url.searchParams.append(key, filtros[key]);
+        }
+    });
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#resultado-notas tbody");
+            tbody.innerHTML = "";
+            data.data.forEach(nota => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${nota.id}</td>
+                    <td>${nota.actividad}</td>
+                    <td>${nota.nota}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error("Error al cargar notas:", error));
+//crear nota ---------------------------------------------------------------------------------------------------
+
+contactoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const estudiante = {
+        id: contactoForm['id'].value,
+        nombre: contactoForm['nombre'].value,
+        email: contactoForm['email'].value,
+    };
+    
+    crearEstudiante(estudiante);
+});
+
+const crearNota = (nota) => {
+    fetch(`${API_URL}/nota`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(nota)
+    })
+        .then((response) => {
+            if (response.status === 404) {
+                alert("Error en el servicio");
+                throw new Error("Servicio no encontrado");
+            }
+            return response.json();
+        })
+        .then((body) => {
+            alert(`Estudiante creado exitosamente: ${body.data.nombre}`);
+            cargarEstudiantes();
+            
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al intentar crear el estudiante.");
+        })
+        .finally(() => console.log("Creación de estudiante finalizada"));
+};
+
+
+notasForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nota = {
+        actividad: contactoForm['actividad'].value,
+        nota: contactoForm['nota'].value,
+        codEstudiante: codigoGlobal
+    };
+    
+    crearNota(nota);
+});
+//---------------------------------------------------------------------------------------
+
+
+
+};

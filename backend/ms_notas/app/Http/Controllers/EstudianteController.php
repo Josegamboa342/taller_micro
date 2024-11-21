@@ -90,7 +90,7 @@ class EstudianteController extends Controller
     {
        $dataBody = $request->all();
        $estudiante = new Estudiante();
-       $estudiante->cod = $dataBody['cod'];
+       $estudiante->cod =  $dataBody['cod'];
        $estudiante->nombres = $dataBody['nombre'];
        $estudiante->email = $dataBody['email'];
        $estudiante->save();
@@ -151,4 +151,3 @@ class EstudianteController extends Controller
     }
 
 }
-   
