@@ -13,15 +13,15 @@ Content-Type: "application/json"
 }
 
 ### Consultar un estudiante por id
-GET http://127.0.0.1:8000/api/pepito/estudiante/1111
+GET http://127.0.0.1:8000/api/pepito/estudiante/1234
 
 ### Modificar un estudiante
-PUT http://127.0.0.1:8000/api/pepito/estudiante/1111
+PUT http://127.0.0.1:8000/api/pepito/estudiante/1234
 Content-Type: "application/json"
 
 {
-    "cod": "1111",
-    "nombre": "Prueba3",
+    "cod": "1234",
+    "nombres": "Prueba3",
     "email": "prueba1@test.com"
 }
 

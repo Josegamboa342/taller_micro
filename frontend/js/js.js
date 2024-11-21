@@ -46,6 +46,80 @@ const crearEstudiante = (estudiante) => {
 };
 
 //-----------------------------------------------------------------------------------------
+
+//editar estudiante------------------------------------------------------------------------------
+const cancelarEdicion = () => {
+    contactoForm.reset();
+
+    const submitBtn = contactoForm.querySelector('button[type="submit"]');
+    submitBtn.textContent = "Crear Estudiante";
+    submitBtn.onclick = null; 
+};
+
+const cargarDatosParaActualizar = (codigo) => {
+    fetch(`${API_URL}/estudiante/${codigo}`)
+        .then(response => response.json())
+        .then(data => {
+            const estudiante = data.data;
+
+            contactoForm['codigo'].value = estudiante.cod;
+            contactoForm['nombre'].value = estudiante.nombres;
+            contactoForm['email'].value = estudiante.email;
+
+            const submitBtn = contactoForm.querySelector('button[type="submit"]');
+            submitBtn.textContent = "Actualizar Estudiante";
+            submitBtn.onclick = (e) => {
+                e.preventDefault(); 
+                actualizarEstudiante(estudiante.cod, {
+                    cod: contactoForm['codigo'].value,
+                    nombre: contactoForm['nombre'].value,
+                    email: contactoForm['email'].value,
+                });
+            };
+            if (!document.querySelector("#cancelar-btn")) {
+                const cancelarBtn = document.createElement("button");
+                cancelarBtn.id = "cancelar-btn";
+                cancelarBtn.textContent = "Cancelar";
+                cancelarBtn.type = "button";
+                cancelarBtn.onclick = cancelarEdicion;
+                contactoForm.appendChild(cancelarBtn);
+            }
+        })
+        .catch(error => console.error("Error al cargar datos del estudiante:", error));
+};
+const actualizarEstudiante = (id, estudiante) => {
+    fetch(`${API_URL}/estudiante/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(estudiante)
+    })
+        .then((response) => {
+            if (response.status === 404) {
+                alert("Estudiante no encontrado.");
+                throw new Error("Estudiante no encontrado.");
+            } else if (response.status === 409) {
+                return response.json().then((error) => {
+                    alert(`Error: ${error.message}`);
+                    throw new Error(error.message);
+                });
+            }
+            return response.json();
+        })
+        .then((body) => {
+            alert(`Estudiante actualizado exitosamente: ${body.data.nombres}`);
+            cargarEstudiantes(); 
+            cancelarEdicion(); 
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al intentar actualizar el estudiante.");
+        })
+        .finally(() => console.log("Actualización de estudiante finalizada"));
+};
+
+//------------------------------------------------------------------------------------------
 const eliminarEstudiante = (codigo) => {
     if (confirm("¿Estás seguro de que deseas eliminar este estudiante?")) {
         fetch(`${API_URL}/estudiante/${codigo}`, {
@@ -92,7 +166,8 @@ const cargarEstudiantes = (filtros = {}) => {
                     <td class="${getEstadoClass(estudiante.nota_definitiva)}">${estudiante.estado}</td>
                     <td>
                         <button onclick="verEstudiante(${estudiante.cod})">Ver</button>
-                        <button onclick="eliminarEstd(${estudiante.cod})" class="eliminar-estudiante">Eliminar</>
+                        <button onclick="eliminarEstd(${estudiante.cod})" class="eliminar-estudiante">Eliminar</button>
+                        <button onclick="cargarDatosParaActualizar(${estudiante.cod})" class="actualizar-estudiante">Actualizar</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -106,6 +181,8 @@ const cargarEstudiantes = (filtros = {}) => {
         })
         .catch(error => console.error("Error al cargar estudiantes:", error));
 };
+
+
 
 const getEstadoClass = (notaDefinitiva) => {
     if (notaDefinitiva >= 0 && notaDefinitiva <= 2) return 'baja';

@@ -126,19 +126,28 @@ class EstudianteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+        public function update(Request $request, string $cod)
     {
         $dataBody = $request->all();
-        $estudiante = Estudiante::find($id);
+        $estudiante = Estudiante::find($cod);
         if (empty($estudiante)) {
-            return response()->json(["msg" => "error"], 404);
+            return response()->json(["msg" => "Estudiante no encontrado"], 404); 
+        }
+
+        $existeCodigo = Estudiante::where('cod', $dataBody['cod'])->where('cod', '!=', $cod)->exists();
+        $existeEmail = Estudiante::where('email', $dataBody['email'])->where('cod', '!=', $cod)->exists();
+
+        if ($existeCodigo || $existeEmail) {
+            $mensaje = $existeCodigo ? 'El código ya está en uso por otro estudiante.' : 'El correo electrónico ya está en uso por otro estudiante.';
+            return response()->json(['message' => $mensaje], 409); 
         }
         $estudiante->cod = $dataBody['cod'];
         $estudiante->nombres = $dataBody['nombre'];
         $estudiante->email = $dataBody['email'];
         $estudiante->save();
+
         $data = ["data" => $estudiante];
-        return response()->json($data, 200);
+        return response()->json($data, 200); 
     }
 
     /**
