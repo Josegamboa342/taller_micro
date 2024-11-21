@@ -86,18 +86,28 @@ class EstudianteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+        public function store(Request $request)
     {
-       $dataBody = $request->all();
-       $estudiante = new Estudiante();
-       $estudiante->cod =  $dataBody['cod'];
-       $estudiante->nombres = $dataBody['nombre'];
-       $estudiante->email = $dataBody['email'];
-       $estudiante->save();
-       $data = ["data" => $estudiante];
-        return response()->json($data, 201);
- 
+        $dataBody = $request->all();
+    
+        $existeCodigo = Estudiante::where('cod', $dataBody['cod'])->exists();
+        $existeEmail = Estudiante::where('email', $dataBody['email'])->exists();
+    
+        if ($existeCodigo || $existeEmail) {
+            $mensaje = $existeCodigo ? 'El código ya está en uso.' : 'El correo electrónico ya está en uso.';
+            return response()->json(['message' => $mensaje], 409); 
+        }
+        $estudiante = new Estudiante();
+        $estudiante->cod = $dataBody['cod'];
+        $estudiante->nombres = $dataBody['nombre'];
+        $estudiante->email = $dataBody['email'];
+        $estudiante->save();
+    
+        $data = ["data" => $estudiante];
+        return response()->json($data, 201); 
     }
+    
+
 
     /**
      * Display the specified resource.

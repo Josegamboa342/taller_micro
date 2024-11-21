@@ -26,20 +26,25 @@ const crearEstudiante = (estudiante) => {
             if (response.status === 404) {
                 alert("Error en el servicio");
                 throw new Error("Servicio no encontrado");
+            } else if (response.status === 409) {
+                return response.json().then((error) => {
+                    alert(`Error: ${error.message}`);
+                    throw new Error(error.message);
+                });
             }
             return response.json();
         })
         .then((body) => {
             alert(`Estudiante creado exitosamente: ${body.data.nombre}`);
             cargarEstudiantes();
-            
         })
         .catch((error) => {
-            console.error("Error:", error);
+            console.error("Advertencia:", error);
             alert("Ocurrió un error al intentar crear el estudiante.");
         })
         .finally(() => console.log("Creación de estudiante finalizada"));
 };
+
 //-----------------------------------------------------------------------------------------
 const eliminarEstudiante = (codigo) => {
     if (confirm("¿Estás seguro de que deseas eliminar este estudiante?")) {
