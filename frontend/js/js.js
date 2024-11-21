@@ -191,9 +191,10 @@ const getEstadoClass = (notaDefinitiva) => {
     if (notaDefinitiva >= 4) return 'alta';
     return '';
 };
+//----------------------------------------------------------------------------------------------------------------
 
 const verEstudiante = (codigo) => {
-    codigoGlobal=codigo;
+    codigoGlobal = codigo;
     fetch(`${API_URL}/estudiante/${codigo}`)
         .then(response => response.json())
         .then(data => {
@@ -230,9 +231,13 @@ const verEstudiante = (codigo) => {
                 `;
                 notasTbody.appendChild(tr);
             });
+
+            document.getElementById("info-estudiante").style.display = "block";
         })
         .catch(error => console.error("Error al cargar estudiante:", error));
 };
+
+//----------------------------------------------------------------------------------------------------------------
 
 const getNotaClass = (nota) => {
     if (nota >= 0 && nota <= 2) return 'baja';
@@ -256,6 +261,7 @@ document.querySelector("#filtros").addEventListener("submit", (e) => {
     cargarEstudiantes(filtros);
 });
 
+//----------------------------------------------------------------------------------------------------------------
 
 
 document.querySelector("#notas tbody").addEventListener("click", function (e) {
@@ -267,6 +273,7 @@ document.querySelector("#notas tbody").addEventListener("click", function (e) {
         }
     }
 });
+//----------------------------------------------------------------------------------------------------------------
 
 const eliminarNota = (notaId) => {
     fetch(`${API_URL}/nota/${notaId}`, {
@@ -281,7 +288,7 @@ const eliminarNota = (notaId) => {
         })
         .catch(error => console.error("Error al eliminar la nota:", error));
 };
-
+//----------------------------------------------------------------------------------------------------------------
 cargarEstudiantes();
 const cargarNotas = (filtros = {}) => {
     const url = new URL(`${API_URL}/notas`);
