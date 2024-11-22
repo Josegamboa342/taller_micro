@@ -22,28 +22,35 @@ use App\Models\Nota;
         $notas = $notas->get();
         return response()->json(['data' => $notas], 200);
     }
-    public function store(Request $request)
-    {
-        $nota = Nota::create($request->all());
-        return response()->json(["data" => $nota], 201);
-    }
 
-    public function show($id)
+        public function store(Request $request)
     {
-        $nota = Nota::find($id);
-        return $nota
-            ? response()->json(['data' => $nota], 200)
-            : response()->json(['msg' => 'Nota no encontrada'], 404);
+        $validated = $request->validate([
+            'actividad' => 'required|string|max:255',
+            'nota' => 'required|numeric|between:0,5',
+            'codEstudiante' => 'required|exists:estudiantes,cod',
+        ]);
+
+        $nota = Nota::create($validated);
+        return response()->json(["data" => $nota], 201);
     }
 
     public function update(Request $request, $id)
     {
         $nota = Nota::find($id);
-        if (!$nota) return response()->json(['msg' => 'Nota no encontrada'], 404);
+        if (!$nota) {
+            return response()->json(['msg' => 'Nota no encontrada'], 404);
+        }
 
-        $nota->update($request->all());
+        $validated = $request->validate([
+            'actividad' => 'required|string|max:255',
+            'nota' => 'required|numeric|between:0,5',
+        ]);
+
+        $nota->update($validated);
         return response()->json(['data' => $nota], 200);
     }
+
 
     public function destroy(Request $request, $id)
     {

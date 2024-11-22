@@ -4,6 +4,7 @@ use App\Http\Controllers\EstudianteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotaController;
+use App\Models\Nota;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,24 @@ use App\Http\Controllers\NotaController;
 // En api.php
 
 
+
+
+
+Route::post('/nota', function (Request $request) {
+    $validated = $request->validate([
+        'actividad' => 'required|string|max:255',
+        'nota' => 'required|numeric|min:0|max:5',
+    ]);
+
+    $nota = Nota::create($validated);
+
+    return response()->json($nota, 201);
+});
+
+Route::get('/notas', function () {
+    $notas = Nota::all();
+    return response()->json($notas);
+});
 
 Route::prefix('api')->group(function () {
     Route::get('/estudiantes', [EstudianteController::class, 'index']);
