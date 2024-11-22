@@ -182,8 +182,6 @@ const cargarEstudiantes = (filtros = {}) => {
         .catch(error => console.error("Error al cargar estudiantes:", error));
 };
 
-
-
 const getEstadoClass = (notaDefinitiva) => {
     if (notaDefinitiva >= 0 && notaDefinitiva <= 2) return 'baja';
     if (notaDefinitiva > 2 && notaDefinitiva < 3) return 'media-baja';
@@ -225,6 +223,9 @@ const verEstudiante = (codigo) => {
                     <td>${nota.id}</td>
                     <td>${nota.actividad}</td>
                     <td>${nota.nota}</td>
+                    <td>
+                        <button class="eliminar-nota" data-id="${nota.id}">Moificar</button>
+                    </td>
                     <td>
                         <button class="eliminar-nota" data-id="${nota.id}">Eliminar</button>
                     </td>
@@ -273,7 +274,7 @@ document.querySelector("#notas tbody").addEventListener("click", function (e) {
         }
     }
 });
-//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------nota
 
 const eliminarNota = (notaId) => {
     fetch(`${API_URL}/nota/${notaId}`, {
@@ -288,7 +289,7 @@ const eliminarNota = (notaId) => {
         })
         .catch(error => console.error("Error al eliminar la nota:", error));
 };
-//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------nota
 cargarEstudiantes();
 const cargarNotas = (filtros = {}) => {
     const url = new URL(`${API_URL}/notas`);
@@ -316,12 +317,12 @@ const cargarNotas = (filtros = {}) => {
         .catch(error => console.error("Error al cargar notas:", error));
 //crear nota ---------------------------------------------------------------------------------------------------
 
-contactoForm.addEventListener('submit', (e) => {
+form-nota.addEventListener('submit', (e) => {
     e.preventDefault();
     const estudiante = {
-        id: contactoForm['id'].value,
-        nombre: contactoForm['nombre'].value,
-        email: contactoForm['email'].value,
+        id: form-nota['id'].value,
+        nombre: form-nota['nombre'].value,
+        email: form-nota['email'].value,
     };
     
     crearEstudiante(estudiante);
@@ -343,15 +344,15 @@ const crearNota = (nota) => {
             return response.json();
         })
         .then((body) => {
-            alert(`Estudiante creado exitosamente: ${body.data.nombre}`);
+            alert(`Nota creada exitosamente: ${body.data.nombre}`);
             cargarEstudiantes();
             
         })
         .catch((error) => {
             console.error("Error:", error);
-            alert("Ocurrió un error al intentar crear el estudiante.");
+            alert("Ocurrió un error al intentar crear la nota.");
         })
-        .finally(() => console.log("Creación de estudiante finalizada"));
+        .finally(() => console.log("Creación de la nota finalizada"));
 };
 
 
@@ -366,7 +367,4 @@ notasForm.addEventListener('submit', (e) => {
     crearNota(nota);
 });
 //---------------------------------------------------------------------------------------
-
-
-
 };

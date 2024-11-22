@@ -13,3 +13,176 @@
 .alta {
     background-color: #c3e6cb; 
 }
+/* Reset de estilos básicos */
+body, h1, h2, p, table, th, td, input, select, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+form {
+    width: 80%; /* Ocupa el 80% del ancho del contenedor */
+    margin: 0 auto; /* Centra el formulario en la página */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form h1 {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+form div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+form input, form select, form button {
+    flex: 1;
+    margin-left: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form button {
+    width: auto;
+    background-color: #144677;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background: #2c3e50;
+    color: #fff;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.eliminar-estudiante {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.eliminar-estudiante:hover {
+    background-color: #c0392b;
+}
+
+.actualizar-estudiante {
+    background-color: #f39c12;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.actualizar-estudiante:hover {
+    background-color: #d35400;
+}
+
+.ver-estudiante {
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.ver-estudiante:hover {
+    background-color: #27ae60;
+}
+
+/* Layout responsivo */
+@media (min-width: 768px) {
+    #filtros {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    #filtros label {
+        flex: 1 1 30%;
+    }
+
+    #filtros input, #filtros select {
+        flex: 1 1 auto;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    table {
+        margin: 20px auto;
+        max-width: 90%;
+    }
+}
+
+#info-estudiante {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fefefe;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: none;
+}
+
+#info-estudiante h2, #info-estudiante h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
