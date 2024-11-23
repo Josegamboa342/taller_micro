@@ -1,10 +1,19 @@
-
 const API_URL = "http://127.0.0.1:8000/api/pepito";
 const contactoForm = document.forms['contactoForm'];
 let codigoGlobal= 0;
 
+
+
 contactoForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    const email = contactoForm['email'].value;
+    
+   
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    if (!emailRegex.test(email)) {
+        alert("Por favor, ingresa un correo electrónico válido.");
+        return;
+    }
     const estudiante = {
         cod: contactoForm['codigo'].value,
         nombre: contactoForm['nombre'].value,
@@ -70,6 +79,13 @@ const cargarDatosParaActualizar = (codigo) => {
             submitBtn.textContent = "Actualizar Estudiante";
             submitBtn.onclick = (e) => {
                 e.preventDefault(); 
+                const email = contactoForm['email'].value;
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert("Por favor, ingresa un correo electrónico válido.");
+                    return;
+                }
                 actualizarEstudiante(estudiante.cod, {
                     cod: contactoForm['codigo'].value,
                     nombre: contactoForm['nombre'].value,
@@ -87,6 +103,8 @@ const cargarDatosParaActualizar = (codigo) => {
         })
         .catch(error => console.error("Error al cargar datos del estudiante:", error));
 };
+
+
 const actualizarEstudiante = (id, estudiante) => {
     fetch(`${API_URL}/estudiante/${id}`, {
         method: "PUT",
@@ -190,6 +208,13 @@ const getEstadoClass = (notaDefinitiva) => {
     return '';
 };
 //----------------------------------------------------------------------------------------------------------------
+const actualizarResumen = (notas) => {
+    const menoresDeTres = notas.filter(nota => parseFloat(nota.nota) < 3).length;
+    const mayoresIgualesTres = notas.filter(nota => parseFloat(nota.nota) >= 3).length;
+
+    document.getElementById("resumen-menores-3").textContent = `Notas menores a 3: ${menoresDeTres}`;
+    document.getElementById("resumen-mayores-3").textContent = `Notas mayores o iguales a 3: ${mayoresIgualesTres}`;
+};
 
 const verEstudiante = (codigo) => {
     codigoGlobal = codigo;
@@ -224,19 +249,19 @@ const verEstudiante = (codigo) => {
                     <td>${nota.actividad}</td>
                     <td>${nota.nota}</td>
                     <td>
-                        <button class="eliminar-nota" data-id="${nota.id}">Moificar</button>
-                    </td>
-                    <td>
                         <button class="eliminar-nota" data-id="${nota.id}">Eliminar</button>
                     </td>
                 `;
                 notasTbody.appendChild(tr);
             });
 
+            actualizarResumen(notasValidas);
+
             document.getElementById("info-estudiante").style.display = "block";
         })
         .catch(error => console.error("Error al cargar estudiante:", error));
 };
+
 
 //----------------------------------------------------------------------------------------------------------------
 
@@ -248,7 +273,7 @@ const getNotaClass = (nota) => {
     return '';
 };
 
-document.querySelector("#filtros").addEventListener("submit", (e) => {
+document.querySelector("#filtros1").addEventListener("submit", (e) => {
     e.preventDefault();
     const filtros = {
         codigo: document.getElementById("codigo").value,

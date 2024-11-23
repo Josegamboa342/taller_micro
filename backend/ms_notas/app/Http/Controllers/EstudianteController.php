@@ -41,7 +41,7 @@ class EstudianteController extends Controller
         $estado = strtolower($request->estado);
         $estudiantes = $estudiantes->filter(function ($estudiante) use ($estado) {
             $promedio = $estudiante->notas->avg('nota');
-            $estado_calculado = is_null($promedio) ? 'sin notas' : ($promedio >= 3 ? 'aprobado' : 'reprobado');
+            $estado_calculado = is_null($promedio) ? 'Sin notas' : ($promedio >= 3 ? 'aprobado' : 'reprobado');
             return $estado_calculado === $estado;
         });
     }

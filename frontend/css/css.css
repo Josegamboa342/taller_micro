@@ -3,17 +3,16 @@
 }
 
 .media-baja {
-    background-color: #fff3cd; 
+    background-color: #fde9a5; 
 }
 
 .media-alta {
-    background-color: #d4edda;
+    background-color: #9de4ae;
 }
 
 .alta {
-    background-color: #c3e6cb; 
+    background-color: #518de6; 
 }
-/* Reset de estilos básicos */
 body, h1, h2, p, table, th, td, input, select, button {
     margin: 0;
     padding: 0;
@@ -38,8 +37,8 @@ h1 {
 }
 
 form {
-    width: 80%; /* Ocupa el 80% del ancho del contenedor */
-    margin: 0 auto; /* Centra el formulario en la página */
+    width: 80%;
+    margin: 0 auto; 
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -98,9 +97,7 @@ table th {
     color: #fff;
 }
 
-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+
 
 table tbody tr:hover {
     background-color: #f1f1f1;
@@ -146,19 +143,18 @@ button {
     background-color: #27ae60;
 }
 
-/* Layout responsivo */
 @media (min-width: 768px) {
-    #filtros {
+    #filtros1 {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
     }
 
-    #filtros label {
+    #filtros1 label {
         flex: 1 1 30%;
     }
 
-    #filtros input, #filtros select {
+    #filtros1 input, #filtros select {
         flex: 1 1 auto;
     }
 
@@ -186,3 +182,67 @@ button {
     color: #2c3e50;
     margin-bottom: 10px;
 }
+
+
+
+
+
+
+
+#filtros {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#filtros h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: bold;
+}
+
+.filtros-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.filtro-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.filtro-item label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.filtro-item input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.filtro-botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.filtro-botones button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.filtro-botones #aplicar-filtros {
+    background-color: #28a745;
+    color: white;
+}
+
+

@@ -39,9 +39,9 @@ Content-Type: "application/json"
 
 {
     "id": "4",
-    "actividad": "y",
-    "nota": "2.0",
-    "codEstudiante":1234
+    "actividad": "ysa",
+    "nota": "2",
+    "codEstudiante":3333
     
     
 }
